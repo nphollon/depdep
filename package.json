@@ -14,13 +14,13 @@
   "scripts": {
     "test": "jasmine-node spec"
   },
-  "homepage": "https://github.com/nphollon/dependency_manager",
+  "homepage": "https://github.com/nphollon/depdep",
   "repository": {
     "type": "git",
     "url": "https://github.com/nphollon/depdep.git"
   },
   "bugs": {
-    "url": "https://github.com/nphollon/dependency_manager/issues"
+    "url": "https://github.com/nphollon/depdep/issues"
   },
   "devDependencies": {
     "jasmine-node": "^2.0.0"
