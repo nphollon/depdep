@@ -1,25 +1,31 @@
 {
   "name": "depdep",
   "version": "0.1.0",
+  "author": "Nick Hollon <nhollon@thoughtworks.com>",
   "description": "Lightweight dependency injection",
-  "main": "src/depdep.js",
+  "keywords": [
+    "dependency",
+    "injection",
+    "inversion",
+    "control",
+  ],
+  "license": "MIT",
+  "main": "./src/depdep.js",
   "scripts": {
     "test": "jasmine-node spec"
   },
+  "homepage": "https://github.com/nphollon/dependency_manager",
   "repository": {
     "type": "git",
     "url": "https://github.com/nphollon/depdep.git"
   },
-  "keywords": [
-    "dependency injection"
-  ],
-  "author": "Nick Hollon",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nphollon/dependency_manager/issues"
   },
-  "homepage": "https://github.com/nphollon/dependency_manager",
   "devDependencies": {
     "jasmine-node": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=0.10.28"
   }
 }
