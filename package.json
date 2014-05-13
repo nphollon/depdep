@@ -7,7 +7,7 @@
     "dependency",
     "injection",
     "inversion",
-    "control",
+    "control"
   ],
   "license": "MIT",
   "main": "./src/depdep.js",
