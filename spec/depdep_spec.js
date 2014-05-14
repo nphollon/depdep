@@ -31,7 +31,7 @@ describe("The dependency manger", function () {
         bar: defaultBar
       }
 
-      var actualContext = depdep.buildApplicationContext(factories)
+      var actualContext = depdep.buildContext(factories)
 
       expect(actualContext).toEqual(expectedContext)
     })
@@ -46,8 +46,17 @@ describe("The dependency manger", function () {
         bar: defaultBar
       }
 
-      var actualContext = depdep.buildApplicationContext(factories, subs)
+      var actualContext = depdep.buildContext(factories, subs)
       expect(actualContext).toEqual(expectedContext)
+    })
+
+    it("should not modify the substitutions argument", function () {
+      var subs = {
+        foo: mockFoo
+      }
+
+      depdep.buildContext(factories, subs)
+      expect(subs.bar).toBe(undefined)
     })
   })
 
@@ -69,7 +78,7 @@ describe("The dependency manger", function () {
         bar: { foobar: defaultFoo }
       }
 
-      var actualContext = depdep.buildApplicationContext(factories)
+      var actualContext = depdep.buildContext(factories)
 
       expect(actualContext).toEqual(expectedContext)
     })
@@ -84,7 +93,7 @@ describe("The dependency manger", function () {
         bar: { foobar: mockFoo }
       }
 
-      var actualContext = depdep.buildApplicationContext(factories, subs)
+      var actualContext = depdep.buildContext(factories, subs)
 
       expect(actualContext).toEqual(expectedContext)
     })
@@ -118,10 +127,36 @@ describe("The dependency manger", function () {
         qux: [ { foobar: defaultFoo }, { foobaz: defaultFoo } ]
       }
 
-      var actualContext = depdep.buildApplicationContext(factories)
+      var actualContext = depdep.buildContext(factories)
 
       expect(actualContext).toEqual(expectedContext)
       expect(factories.foo.calls.count()).toBe(1)
+    })
+  })
+
+  describe("lazy context", function () {
+    var factories, context
+
+    beforeEach(function () {
+      factories = {
+        foo: function () {},
+        bar: function () {}
+      }
+      spyOn(factories, "foo")
+      spyOn(factories, "bar")
+
+      context = depdep.buildLazyContext(factories)
+    })
+
+    it("should not build any dependencies immediately", function () {
+      expect(factories.foo).not.toHaveBeenCalled()
+      expect(factories.bar).not.toHaveBeenCalled()
+    })
+
+    it("should build dependency when it is accessed", function () {
+      context.foo
+      expect(factories.foo).toHaveBeenCalled()
+      expect(factories.bar).not.toHaveBeenCalled()
     })
   })
 })

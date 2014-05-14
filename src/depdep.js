@@ -1,43 +1,37 @@
 "use strict";
 
-var copyProperties = function (to, from) {
-  if (from) {
-    Object.keys(from).forEach(function (key) {
-      to[key] = from[key]
-    })
-  }
-}
-
-var buildShadow = function (factories, objects) {
-  var shadow = {}
-
-  var getOrBuild = function (name) {
-    return function () {
-      if (!objects.hasOwnProperty(name)) {
-        objects[name] = factories[name].call(null, shadow)
-      }
-      return objects[name]
-    }
-  }
-
-  var defineShadowProperty = function (name) {
-    Object.defineProperty(shadow, name, {
-      enumerable: true,
-      get: getOrBuild(name)
-    })
-  }
-
-  Object.keys(factories).forEach(defineShadowProperty)
-
-  return shadow
-}
-
-exports.buildApplicationContext = function (factories, substitutions) {
+exports.buildLazyContext = function (factories, substitutions) {
+  var context = {}
   var objects = {}
-  var shadow = buildShadow(factories, objects)
+  var prebuilt = substitutions || {}
 
-  copyProperties(objects, substitutions)
-  copyProperties(objects, shadow)
+  var getObject = function (name) {
+    return prebuilt[name] || factories[name].call(null, context)
+  }
 
-  return objects
+  var defineLazyInitializer = function (name) {
+    Object.defineProperty(context, name, {
+      enumerable: true,
+      get: function () {
+        if (!objects.hasOwnProperty(name)) {
+          objects[name] = getObject(name)
+        }
+        return objects[name]
+      }
+    })
+  }
+
+  Object.keys(factories).forEach(defineLazyInitializer)
+
+  return context
+}
+
+exports.buildContext = function (factories, substitutions) {
+  var context = this.buildLazyContext(factories, substitutions)
+
+  Object.keys(context).forEach(function (name) {
+    context[name]
+  })
+
+  return context
 }
