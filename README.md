@@ -3,9 +3,12 @@ depdep
 
 Depdep is a dependency injection framework for Node. The goal of depdep is to simplify the set-up of functional and integration tests by making it easy to inject test doubles (mocks, stubs, spies, etc) into a fully-wired application.
 
-Depdep only has one function, and it looks like this:
+Depdep has two functions, and they look like this:
 
-    var context = require("depdep").buildApplicationContext(factories, substitutions)
+    require("depdep").buildContext(factories, substitutions)
+
+    require("depdep").buildLazyContext(factories, substitutions)
+
 
 ### Building objects with no dependencies
 
@@ -57,13 +60,34 @@ Depdep does not currently try to detect or prevent circular dependencies. If you
       }
     }
     
-    context = require("depdep").buildApplicationContext(factories, substitutions)
+    context = require("depdep").buildContext(factories, substitutions)
     context.mom instanceof Mother // false
     console.log(context.mom.message) // "I am not your real mother."
 
 The substitutions argument is optional. It is intended to be used by your tests to replace application components with mocks or stubs.
 
 In the substitutions object, the value of each property is an object. This object will be placed directly into the application context, instead of the product of the factory function. In this case, the factory function is never called.
+
+### Lazy initialization
+
+    var factories = {
+      greeting: function () {
+        console.log("Hello")
+        return "Hello"
+      },
+      farewell: function () {
+        console.log("Goodbye")
+        return "Goodbye"
+      }
+    }
+
+    require("depdep").buildContext(factories) // Both messages printed to console
+                                              // Order of messages not guaranteed
+
+    require("depdep").buildLazyContext(factories) // No messages printed yet
+    var message = factories.greeting // Prints "Hello"
+
+When `buildContext` is called, it returns an application context with all of its member objects already initialized. Depdep has an alternative context building function, `buildLazyContext`, in which each member object is lazily initialized. That is, the factory function for an object is not called until a client attempts to retreive the object from the application context.
 
 ### An example
 
@@ -96,8 +120,8 @@ Below is an example of what a basic web server might look like when wired togeth
       }
     }
 
-    var buildApplication = function (substitutions) {
-      var context = require("depdep").buildApplicationContext(defaultFactories, substitutions)
+    var buildApplication = function (subs) {
+      var context = require("depdep").buildContext(factories, subs)
 
       return {
         start: function (port) {
