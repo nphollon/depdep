@@ -6,7 +6,6 @@ Depdep is a dependency injection framework for Node. The goal of depdep is to si
 Depdep has two functions, and they look like this:
 
     require("depdep").buildContext(factories, substitutions)
-
     require("depdep").buildLazyContext(factories, substitutions)
 
 
@@ -81,8 +80,8 @@ In the substitutions object, the value of each property is an object. This objec
       }
     }
 
-    require("depdep").buildContext(factories) // Both messages printed to console
-                                              // Order of messages not guaranteed
+    require("depdep").buildContext(factories) // Prints "Hello" and "Goodbye"
+                                              // Messages may be in either order
 
     require("depdep").buildLazyContext(factories) // No messages printed yet
     var message = factories.greeting // Prints "Hello"
